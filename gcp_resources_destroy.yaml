@@ -1,0 +1,26 @@
+id: gcp_resources_destroy
+namespace: dezc
+
+description: |
+  Workflow to destroy the GCP resources used in the project.
+
+tasks:
+  - id: parallel_cleanup
+    type: io.kestra.plugin.core.flow.Parallel
+    tasks:
+    - id: destroy_bq_dataset
+      type: io.kestra.plugin.gcp.bigquery.DeleteDataset
+      name: "{{kv('GCP_DATASET')}}"
+      deleteContents: true
+
+    - id: destroy_gcs_bucket
+      type: io.kestra.plugin.gcp.gcs.DeleteBucket
+      name: "{{kv('GCP_BUCKET_NAME')}}"
+
+pluginDefaults:
+  - type: io.kestra.plugin.gcp
+    values:
+      serviceAccount: "{{kv('GCP_CREDS')}}"
+      projectId: "{{kv('GCP_PROJECT_ID')}}"
+      location: "{{kv('GCP_LOCATION')}}"
+      bucket: "{{kv('GCP_BUCKET_NAME')}}"

@@ -1,0 +1,42 @@
+id: taxi_data_loader
+namespace: dezc
+
+description: |
+  Workflow to process a single month of data for both types of taxi.
+
+variables:
+  date: "{{trigger.date | date('yyyy-MM')}}"
+
+tasks:
+  - id: set_label
+    type: io.kestra.plugin.core.execution.Labels
+    labels:
+      date: "{{render(vars.date)}}"
+
+  - id: parallel
+    type: io.kestra.plugin.core.flow.Parallel
+    tasks:
+      - id: worker_call_green
+        type: io.kestra.plugin.core.flow.Subflow
+        namespace: dezc
+        flowId: process_month
+        inputs:
+          taxi: "green"
+          date: "{{render(vars.date)}}"
+        wait: true
+        transmitFailed: true
+
+      - id: worker_call_yellow
+        type: io.kestra.plugin.core.flow.Subflow
+        namespace: dezc
+        flowId: process_month
+        inputs:
+          taxi: "yellow"
+          date: "{{render(vars.date)}}"
+        wait: true
+        transmitFailed: true
+
+triggers:
+  - id: ny_taxi_loader_schedule
+    type: io.kestra.plugin.core.trigger.Schedule
+    cron: "0 0 1 * *"
