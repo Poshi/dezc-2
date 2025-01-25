@@ -52,3 +52,7 @@ You can see how it works by running the `taxi_data_loader` to backfill some
 data.
 Go to the triggers tab and start the backfill for any period between 2019-01
 and 2021-07 (included).
+
+Finally, to answer the different questions fo the homework, some
+SQL queries have been run on the BigQuery DB.
+Those queries can be found at the corresponding files (`queryX.sql`).
